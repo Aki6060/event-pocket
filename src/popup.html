@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Pocket</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="hd">
+    <span class="logo">EP</span>
+    <div>
+      <div class="t">Event Pocket</div>
+      <div class="s">Collect signals. Build insights.</div>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="meta" id="meta">正在读取当前页面…</div>
+
+    <label class="fld">
+      <span>原文摘录</span>
+      <textarea id="excerpt" rows="4" placeholder="选中网页文字后保存，或在此粘贴原文"></textarea>
+    </label>
+
+    <label class="fld">
+      <span>用户批注</span>
+      <textarea id="note" rows="3" placeholder="为什么值得保留？可能支持什么判断？"></textarea>
+    </label>
+
+    <div class="row">
+      <label class="fld"><span>项目</span><select id="project"></select></label>
+      <label class="fld"><span>主题</span><select id="theme"></select></label>
+    </div>
+
+    <div class="row">
+      <label class="fld"><span>类目</span><select id="category"></select></label>
+      <label class="fld"><span>类型</span><select id="type"></select></label>
+    </div>
+
+    <label class="fld"><span>标签（逗号分隔）</span><input id="tags" placeholder="家庭场景, 跨设备协同"></label>
+  </div>
+
+  <footer class="ft">
+    <button id="manage" class="ghost">素材管理</button>
+    <button id="save" class="primary">保存</button>
+  </footer>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="store.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

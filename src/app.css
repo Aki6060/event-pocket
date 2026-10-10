@@ -1,0 +1,288 @@
+/* CSS 变量放在 :root：#ep-modal 在 .ep-app 之外，放 .ep-app 上会导致弹窗内 var() 解析失败（按钮白底白字）
+   默认值为「深红」，换肤由 src/themes.js 在 documentElement 上覆写同名变量 */
+:root {
+  --ep-line: #E1E1E4;
+  --ep-ink: #1A1A1C;
+  --ep-sub: #6E6C73;
+  --ep-muted: #9B989E;
+  --ep-bg: #FFFFFF;
+  --ep-soft: #F2F2F3;
+  --ep-hover: #F2F2F3;
+  --ep-surface: #FFFFFF;
+  --ep-surface-2: #FAFAFB;
+  --ep-accent: #B9182A;
+  --ep-on-accent: #FFFFFF;
+  --ep-hot: #B9182A;
+  --ep-danger: #B9182A;
+  --ep-select-bg: #FBEDEF;
+  --ep-select-fg: #B9182A;
+  --ep-quote-line: #B9182A;
+  --ep-link: #B9182A;
+  --ep-badge-bg: #F2F2F3;
+  --ep-badge-fg: #4A4A50;
+  --ep-toast-bg: #1A1A1C;
+  --ep-toast-fg: #FFFFFF;
+  --ep-toast-sub: #C9C8CC;
+}
+
+.ep-app {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ep-ink);
+  background: var(--ep-bg);
+  min-height: 100%;
+}
+
+.ep-app * { box-sizing: border-box; }
+
+.ep-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--ep-line);
+  background: var(--ep-surface);
+}
+
+.ep-brand { display: flex; align-items: center; gap: 12px; }
+
+.ep-logo {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: var(--ep-accent);
+  color: var(--ep-on-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; letter-spacing: .02em;
+}
+
+.ep-title { font-size: 17px; font-weight: 600; }
+.ep-slogan { font-size: 12px; color: var(--ep-sub); margin-top: 2px; }
+
+.ep-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.ep-btn {
+  border: 1px solid var(--ep-line);
+  background: var(--ep-surface);
+  color: var(--ep-ink);
+  border-radius: 8px;
+  padding: 8px 13px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.ep-btn:hover { border-color: var(--ep-sub); }
+.ep-btn.primary { background: var(--ep-accent); color: var(--ep-on-accent); border-color: var(--ep-accent); }
+.ep-btn.ghost { background: transparent; color: var(--ep-sub); }
+.ep-btn.sm { padding: 5px 9px; font-size: 11px; }
+
+.ep-body { display: flex; min-height: 520px; }
+
+.ep-side {
+  width: 280px;
+  border-right: 1px solid var(--ep-line);
+  padding: 16px 12px;
+  background: var(--ep-surface-2);
+}
+
+.ep-side-block { margin-bottom: 22px; }
+
+.ep-side-title {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ep-sub); margin-bottom: 8px;
+}
+
+.ep-node {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  border: 1px solid transparent;
+}
+.ep-node:hover { background: var(--ep-hover); }
+.ep-node.on { background: var(--ep-select-bg); border-color: var(--ep-line); color: var(--ep-select-fg); font-weight: 600; }
+.ep-node.leaf { padding-left: 22px; font-size: 12.5px; color: var(--ep-ink); }
+.ep-node.leaf.on { color: var(--ep-select-fg); }
+.ep-node-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-node.on .ep-count { color: inherit; opacity: .8; }
+.ep-count { font-size: 10.5px; color: var(--ep-muted); flex: none; font-variant-numeric: tabular-nums; }
+.ep-node.on .ep-dot { background: var(--ep-accent); }
+
+.ep-cats { margin-left: 10px; border-left: 1px solid var(--ep-line); padding-left: 4px; }
+
+/* 项目 → 主题 → 类目：统一树结构，连接线让层级关系可见 */
+.ep-root-node { margin-bottom: 3px; }
+.ep-project-root { margin-top: 3px; }
+.ep-tree { display: grid; gap: 3px; margin-top: 3px; }
+.ep-tree-branch { position: relative; }
+.ep-tree-children { margin-left: 13px; padding-left: 9px; border-left: 1px solid var(--ep-line); display: grid; gap: 3px; }
+.ep-tree-node { position: relative; }
+.ep-tree-node::before {
+  content: ''; position: absolute; left: -10px; top: 50%; width: 7px; border-top: 1px solid var(--ep-line);
+}
+.ep-tree-project::before { display: none; }
+.ep-tree-theme { margin-top: 3px; }
+.ep-tree-cat { font-size: 12.5px; }
+
+.ep-tree-add {
+  flex: none;
+  border: 1px solid var(--ep-line);
+  border-radius: 5px;
+  padding: 3px 6px;
+  background: var(--ep-surface);
+  color: var(--ep-link);
+  cursor: pointer;
+  font: inherit;
+  font-size: 10.5px;
+  line-height: 1.2;
+}
+.ep-tree-add:hover { border-color: var(--ep-link); background: var(--ep-select-bg); }
+.ep-root-add { padding: 4px 7px; font-size: 11px; }
+
+.ep-mini {
+  border: none; background: transparent; color: var(--ep-sub);
+  cursor: pointer; font-size: 13px; line-height: 1; padding: 2px 4px; border-radius: 5px;
+}
+.ep-mini:hover { background: var(--ep-hover); color: var(--ep-ink); }
+.ep-mini.danger:hover { color: var(--ep-danger); }
+.ep-node.on .ep-mini { color: inherit; opacity: .75; }
+.ep-node.on .ep-mini:hover { opacity: 1; background: rgba(0, 0, 0, .08); }
+
+.ep-empty-sm { font-size: 12px; color: var(--ep-muted); padding: 6px 9px; }
+
+.ep-main { flex: 1; padding: 16px 20px; min-width: 0; }
+
+.ep-filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+
+.ep-input {
+  flex: 1; min-width: 220px;
+  border: 1px solid var(--ep-line); border-radius: 8px;
+  padding: 9px 12px; font-size: 14px; outline: none;
+  background: var(--ep-surface); color: var(--ep-ink);
+}
+.ep-input:focus { border-color: var(--ep-sub); }
+
+.ep-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.ep-chip {
+  border: 1px solid var(--ep-line); background: var(--ep-surface); color: var(--ep-sub);
+  border-radius: 999px; padding: 5px 11px; font-size: 11.5px; cursor: pointer;
+}
+.ep-chip.on { background: var(--ep-accent); color: var(--ep-on-accent); border-color: var(--ep-accent); }
+
+.ep-list { display: grid; gap: 12px; }
+
+.ep-card {
+  border: 1px solid var(--ep-line);
+  border-radius: 11px;
+  padding: 14px 16px;
+  background: var(--ep-surface);
+}
+.ep-card:hover { border-color: var(--ep-sub); }
+
+.ep-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ep-spacer { flex: 1; }
+
+.ep-badge {
+  font-size: 11px; padding: 3px 8px; border-radius: 999px;
+  background: var(--ep-badge-bg); color: var(--ep-badge-fg);
+}
+.ep-badge.hot { background: var(--ep-hot); color: var(--ep-on-accent); }
+.ep-badge.line { background: var(--ep-surface); border: 1px solid var(--ep-line); color: var(--ep-sub); }
+.ep-path { font-size: 11.5px; color: var(--ep-sub); }
+
+.ep-card-title { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.ep-url { font-size: 12.5px; color: var(--ep-link); text-decoration: none; word-break: break-all; }
+
+.ep-block { margin-top: 10px; }
+.ep-label { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ep-muted); margin-bottom: 4px; }
+
+.ep-quote {
+  margin: 0; padding: 8px 12px;
+  border-left: 3px solid var(--ep-quote-line);
+  background: var(--ep-soft);
+  font-size: 13px; line-height: 1.65; white-space: pre-wrap;
+}
+
+.ep-note { font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
+
+.ep-card-foot {
+  display: flex; gap: 12px; margin-top: 10px;
+  font-size: 11px; color: var(--ep-muted); flex-wrap: wrap;
+}
+.ep-tags { color: var(--ep-sub); }
+
+.ep-empty { text-align: center; padding: 60px 20px; color: var(--ep-sub); }
+.ep-empty-title { font-size: 14px; font-weight: 600; color: var(--ep-ink); margin-bottom: 6px; }
+.ep-empty-sub { font-size: 12.5px; }
+
+.ep-modal { position: absolute; inset: 0; z-index: 40; }
+.ep-modal[hidden] { display: none; }
+.ep-modal-mask { position: absolute; inset: 0; background: rgba(20, 22, 28, .35); }
+
+.ep-modal-box {
+  position: relative;
+  width: min(680px, calc(100% - 40px));
+  margin: 40px auto;
+  background: var(--ep-surface); border-radius: 12px;
+  border: 1px solid var(--ep-line);
+  max-height: calc(100% - 80px);
+  overflow: auto;
+}
+
+.ep-modal-head { padding: 14px 18px; border-bottom: 1px solid var(--ep-line); font-size: 14px; font-weight: 600; }
+.ep-modal-body { padding: 16px 18px; }
+.ep-modal-foot { padding: 12px 18px; border-top: 1px solid var(--ep-line); display: flex; justify-content: flex-end; gap: 8px; }
+
+.ep-form { padding: 16px 18px; display: grid; gap: 12px; }
+.ep-form label { display: grid; gap: 5px; font-size: 11.5px; color: var(--ep-sub); }
+.ep-form textarea, .ep-form input, .ep-form select {
+  border: 1px solid var(--ep-line); border-radius: 8px;
+  padding: 8px 10px; font-size: 13px; font-family: inherit; color: var(--ep-ink);
+  background: var(--ep-surface); outline: none;
+}
+.ep-form textarea:focus, .ep-form input:focus, .ep-form select:focus { border-color: var(--ep-sub); }
+.ep-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media (max-width: 720px) { .ep-row { grid-template-columns: 1fr; } }
+
+/* 换肤面板 */
+.ep-theme-box { width: min(620px, calc(100% - 40px)); }
+.ep-theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.ep-theme-card {
+  border: 1px solid var(--ep-line); border-radius: 10px; padding: 10px 11px;
+  background: var(--ep-surface); cursor: pointer; text-align: left;
+  display: grid; gap: 6px;
+}
+.ep-theme-card:hover { border-color: var(--ep-sub); }
+.ep-theme-card.on { border: 2px solid var(--ep-accent); }
+.ep-theme-name { font-size: 12.5px; font-weight: 600; color: var(--ep-ink); }
+.ep-theme-en { font-size: 10px; font-weight: 400; color: var(--ep-muted); letter-spacing: .04em; }
+.ep-swatches { display: flex; gap: 4px; }
+.ep-sw { width: 26px; height: 14px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .1); }
+
+/* 侧边栏 / 窄屏适配：Chrome Side Panel 宽度通常在 320-420px */
+@media (max-width: 560px) {
+  .ep-body { flex-direction: column; min-height: 0; }
+  .ep-side {
+    width: 100% !important;
+    flex: none;
+    max-height: 200px;
+    overflow: auto;
+    border-right: none !important;
+    border-bottom: 1px solid var(--ep-line);
+  }
+  .ep-main { padding: 12px 14px; }
+  .ep-head { padding: 12px 14px; }
+  .ep-filter { flex-wrap: wrap; }
+  .ep-theme-grid { grid-template-columns: 1fr; }
+}
+
+/* 页面内对话框（替代被 Side Panel 禁用的原生 prompt/confirm/alert） */
+.ep-dialog { width: min(420px, calc(100% - 40px)); }
+.ep-dialog .ep-modal-body { padding: 14px 16px; }
+.ep-dialog-msg { margin: 0 0 10px; font-size: 12.5px; line-height: 1.6; color: var(--ep-sub); }
+.ep-dialog .ep-modal-body label { display: grid; gap: 5px; font-size: 11px; color: var(--ep-sub); }
+.ep-dialog .ep-modal-body input {
+  border: 1px solid var(--ep-line); border-radius: 8px; padding: 8px 10px;
+  font-size: 13px; font-family: inherit; color: var(--ep-ink); outline: none; width: 100%; box-sizing: border-box;
+}
+.ep-dialog .ep-modal-body input:focus { border-color: var(--ep-sub); }

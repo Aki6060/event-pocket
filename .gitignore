@@ -1,0 +1,19 @@
+# ===== 构建产物 / 打包分发 =====
+*.zip
+# 解包后的发布目录（由 zip 解压，属于分发产物）
+event-pocket-0.4.1/
+event-pocket-0.5.1/
+
+# ===== 日志 / 临时 =====
+*.log
+server.log
+
+# ===== 游离预览文件（非插件本体） =====
+eva-skins.preview.html
+
+# ===== 操作系统 / 编辑器 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

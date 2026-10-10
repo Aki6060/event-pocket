@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="VFCIFkC1BztaTkqkDSw121">
+<head data-page-node-id="PSfz6qFRXEPsMXMBHCcIkG">
+  <meta charset="UTF-8" data-page-node-id="ZXPxI1ltFCzmxgueX1AoA8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="YMVDrDjvBRfrOYjrKAMnvv">
+  <title>Event Pocket · 本地预览</title>
+  <link rel="stylesheet" href="src/app.css" data-page-node-id="c9fsF8EklzBWbHIV03r0Wl">
+  <link rel="stylesheet" href="src/content.css">
+  <style>
+    html, body { margin: 0; height: 100%; }
+    .demo {
+      margin: 16px 20px 0; padding: 14px 16px;
+      background: #fff; border: 1px dashed #c9c9d1; border-radius: 11px;
+    }
+    .demo h2 { margin: 0 0 6px; font-size: 13px; }
+    .demo .hint { margin: 0 0 10px; font-size: 11.5px; color: #6b7280; }
+    .demo article { font-size: 13.5px; line-height: 1.75; color: #27292e; max-width: 720px; }
+    .demo article p { margin: 0 0 8px; }
+    body { background: #f7f7f8; font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .wrap { position: relative; min-height: 100%; }
+    .bar {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 12px 20px; background: #16181d; color: #fff;
+    }
+    .bar .t { font-size: 14px; font-weight: 600; }
+    .bar .s { font-size: 11px; opacity: .7; }
+    .bar .note { margin-left: auto; font-size: 11px; opacity: .75; }
+    .capture {
+      margin: 16px 20px 0; padding: 14px 16px;
+      background: #fff; border: 1px solid #e4e4e7; border-radius: 11px;
+    }
+    .capture h2 { margin: 0 0 10px; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid label { display: grid; gap: 4px; font-size: 11px; color: #5f6368; }
+    .grid textarea, .grid input, .grid select {
+      border: 1px solid #e4e4e7; border-radius: 7px; padding: 7px 9px;
+      font-size: 12.5px; font-family: inherit; width: 100%; box-sizing: border-box; outline: none;
+    }
+    .grid textarea:focus, .grid input:focus, .grid select:focus { border-color: #b9b9c0; }
+    .capture .ft { display: flex; gap: 8px; margin-top: 10px; }
+    .btn { border: 1px solid #e4e4e7; background: #fff; border-radius: 7px; padding: 7px 13px; font-size: 12px; cursor: pointer; }
+    .btn.primary { background: #16181d; color: #fff; border-color: #16181d; }
+    .btn.ghost { color: #5f6368; }
+    .toast {
+      position: absolute; left: 50%; transform: translateX(-50%); bottom: 24px;
+      background: #16181d; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; z-index: 60;
+    }
+    .toast[hidden] { display: none; }
+    #root { margin-top: 16px; }
+  </style>
+</head>
+<body data-page-node-id="PLYfsfuyHRPVDJ7PypwxwV">
+  <div class="wrap" data-page-node-id="O6i6yO6ogwOGpypkNW028j">
+    <div class="bar" data-page-node-id="FAQzgyCNuFAJ2Y9sB2Ukj2">
+      <span class="t" data-page-node-id="NbCSCRHTvE9mSIHtkgwF9m">Event Pocket</span>
+      <span class="s" data-page-node-id="BPEE2gMl4WBk05gyAJQAha">Collect signals. Build insights.</span>
+      <span class="note" data-page-node-id="kL7gFZomgoae2JO7a40jzp">本地预览版：数据保存在浏览器 localStorage</span>
+    </div>
+
+    <section class="demo">
+      <h2>① 划词试一试：在下面这段文字里选中任意一句</h2>
+      <p class="hint">真实插件里，这是任意网页。选中后会就近出现「收进 Event Pocket」气泡，点开即可写批注保存。</p>
+      <article>
+        <p>IFA 2026 的官方回顾把主线收敛到一句话：家庭中的设备不再等待指令，而是围绕用户目标主动协同完成任务。展会上，跨设备任务接力从手机扩展到电视、音箱与家电控制中心。</p>
+        <p>值得注意的是，头部厂商普遍把展示重心从单品参数转向生态协同；而新兴玩家则集中在细分场景切入，用单一功能点撬动特定人群。</p>
+        <p>对 TV 软件而言，真正的空位在于：细分场景缺少一个稳定的收拢入口，这正是系统级能力可以补位的地方。</p>
+      </article>
+    </section>
+
+    <section class="capture" data-ep-no-capture data-page-node-id="C1TQxLeIZYAb7FgSsMSnT5">
+      <h2 data-page-node-id="HDjBoNWzGMWRaYq5JIbXEn">模拟采集面板（真实插件中由浏览器右键菜单 / 弹窗触发）</h2>
+      <div class="grid" data-page-node-id="lz99BfcHyl6er12sMKUFqE">
+        <label data-page-node-id="iLf1YTL6DHWTfALl7cdVAJ">网页标题<input id="c-title" value="IFA 2026 官方回顾：家庭 AI 成为主线" data-page-node-id="3tSWcsAwjgOomsbGRGTJ34"></label>
+        <label data-page-node-id="PS9VnF6YExYm0Z2e7xzgfF">URL<input id="c-url" value="https://example.com/ifa-2026-review" data-page-node-id="GtKA1A94yBrOCbLtEoxQEZ"></label>
+        <label data-page-node-id="fjrVK2srmwoDZCox1PScEQ">来源<input id="c-publisher" value="IFA 官方" data-page-node-id="nOhVjWT1DLsdF2DPHFfTyl"></label>
+        <label data-page-node-id="qlxRMjf4lfEABSdYoneUft">发布时间<input id="c-published" value="2026-09-08" data-page-node-id="sY9VbBviVOZqdgDY1N4gxn"></label>
+        <label data-page-node-id="sGHADKcgIMTJ0qpTcg7oXg">原文摘录<textarea id="c-excerpt" rows="3">家庭中的设备不再等待指令，而是围绕用户目标主动协同完成任务。</textarea></label>
+        <label data-page-node-id="HaGSEMb3Hn08rAqByjFhuj">用户批注<textarea id="c-note" rows="3">可支持“主动执行、多端协同”趋势，需要补一家以上厂商佐证。</textarea></label>
+        <label data-page-node-id="6HTicT198AWnCol3qGzNb7">项目<select id="c-project" data-page-node-id="Dt6m0gyqT0qEEfLYd3H1Y7"></select></label>
+        <label data-page-node-id="ZeKGrzsa3Xu4agE2y3fNQf">主题<select id="c-theme" data-page-node-id="UcvDs8srDt5uu9VLcLGpBm"></select></label>
+        <label data-page-node-id="e0ziba4DApnCNyBBkEaI93">类目<select id="c-category" data-page-node-id="TIM19XktApNOOU8Qq1Mbry"></select></label>
+        <label data-page-node-id="lhm00OoMVSUk8slyc2oCc7">类型<select id="c-type" data-page-node-id="Dr2tMyonjyfl3KPnRddKhH"></select></label>
+        <label data-page-node-id="ogWimK77dl73D948JieyRL">标签<select id="c-tags" data-page-node-id="6pmVjtbgnRC3AAYwLfLPV0"></select></label>
+      </div>
+      <div class="ft" data-page-node-id="yo2lRMO0kkU5FkPoLABDaF">
+        <button class="btn primary" id="c-save" data-page-node-id="v6QYK7cxFHi5ydKNaEbyI7">保存素材</button>
+        <button class="btn ghost" id="c-demo" data-page-node-id="OEu3EA0nMEcDBLokdhfBVM">重置演示数据</button>
+      </div>
+    </section>
+
+    <div id="root" data-ep-no-capture data-page-node-id="mMaNro9L7UDszHbUCRBx5n"></div>
+    <div class="toast" id="toast" hidden data-page-node-id="VYPHQ0JFGgP0ZozSVdxq5Q"></div>
+  </div>
+
+  <script src="src/store.js"></script>
+  <script>
+    // 预览环境模拟扩展运行时，使划词浮窗可直接使用真实 content.js
+    window.chrome = window.chrome || {
+      runtime: {
+        getURL: function (p) { return p; },
+        sendMessage: function (msg, cb) {
+          if (msg && msg.type === 'EP_GET_TREE') {
+              window.EP.store.get().then((d) => {
+                const pid = d.settings.lastProjectId || (d.projects[0] && d.projects[0].id) || null;
+                cb({
+                  projects: d.projects,
+                  themes: d.themes,
+                  categories: d.categories,
+                  lastProjectId: pid,
+                  theme: d.settings.theme || 'night'
+                });
+              });
+            return;
+          }
+          if (msg && msg.type === 'EP_SAVE_QUICK') {
+            window.EP.store.update((d) => {
+              const p = msg.payload || {};
+              d.items.push(window.EP.model.createItem({
+                projectId: p.projectId || d.settings.lastProjectId || (d.projects[0] && d.projects[0].id) || null,
+                themeId: p.themeId || null,
+                categoryId: p.categoryId || null,
+                excerpt: p.excerpt || '',
+                note: p.note || '',
+                pageTitle: (p.page && p.page.pageTitle) || '本地预览页',
+                url: (p.page && p.page.url) || location.href,
+                publisher: (p.page && p.page.publisher) || 'preview',
+                publishedAt: (p.page && p.page.publishedAt) || '',
+                sourceType: p.sourceType || '其他',
+                tags: p.tags || []
+              }));
+            }).then(() => {
+              if (window.EP.app && window.EP.app.refresh) window.EP.app.refresh();
+            });
+          }
+          if (cb) cb({ ok: true });
+        },
+        onMessage: { addListener: function () {} }
+      }
+    };
+  </script>
+  <script src="src/themes.js"></script>
+  <script src="src/content.js"></script>
+  <script src="src/export.js"></script>
+  <script src="src/app.js"></script>
+  <script>
+    (function () {
+      const EP = window.EP;
+      const el = (id) => document.getElementById(id);
+
+      function toast(msg) {
+        const t = el('toast');
+        t.textContent = msg;
+        t.hidden = false;
+        setTimeout(() => { t.hidden = true; }, 1600);
+      }
+
+      function fill(sel, list, placeholder) {
+        sel.innerHTML = '<option value="">' + placeholder + '</option>' +
+          list.map((x) => '<option value="' + x.id + '">' + x.name + '</option>').join('');
+      }
+
+      async function seed(force) {
+        const d = await EP.store.get();
+        if (!force && d.projects.length) return d;
+        const p = EP.model.createProject('IFA 2026', '示例：展会快速洞察');
+        const t1 = EP.model.createTheme(p.id, 'AI 与主动执行');
+        const t2 = EP.model.createTheme(p.id, '显示与形态');
+        const c1 = EP.model.createCategory(p.id, t1.id, '家庭场景');
+        const c2 = EP.model.createCategory(p.id, t1.id, '多端协同');
+        const c3 = EP.model.createCategory(p.id, t2.id, '新设备形态');
+        await EP.store.set({
+          projects: [p],
+          themes: [t1, t2],
+          categories: [c1, c2, c3],
+          items: [
+            EP.model.createItem({
+              projectId: p.id, themeId: t1.id, categoryId: c1.id,
+              excerpt: '家庭中的设备不再等待指令，而是围绕用户目标主动协同完成任务。',
+              note: '可支持“主动执行、多端协同”趋势，需补第二来源。',
+              pageTitle: 'IFA 2026 官方回顾', url: 'https://example.com/ifa-2026-review',
+              publisher: 'IFA 官方', publishedAt: '2026-09-08', sourceType: '官方活动',
+              tags: ['家庭场景', '主动执行']
+            }),
+            EP.model.createItem({
+              projectId: p.id, themeId: t1.id, categoryId: c2.id,
+              excerpt: '跨设备任务接力从手机扩展到电视、音箱与家电控制中心。',
+              note: '与 TV 控制中心改版方向相关，值得纳入规划讨论。',
+              pageTitle: '某厂商发布多端协同能力', url: 'https://example.com/vendor-multi-device',
+              publisher: '厂商官方', publishedAt: '2026-09-06', sourceType: '厂商官方',
+              tags: ['多端协同']
+            })
+          ],
+          settings: { lastProjectId: p.id }
+        });
+        return EP.store.get();
+      }
+
+      async function syncSelects() {
+        const d = await EP.store.get();
+        fill(el('c-project'), d.projects, '未归类');
+        const pid = el('c-project').value || d.projects[0] && d.projects[0].id;
+        if (pid) el('c-project').value = pid;
+        fill(el('c-theme'), d.themes.filter((t) => t.projectId === pid), '未归类');
+        fill(el('c-category'), [], '未归类');
+        el('c-type').innerHTML = EP.model.SOURCE_TYPES.map((t) => '<option>' + t + '</option>').join('');
+        el('c-tags').innerHTML = '<option value="">（可选）选择已有标签</option>' +
+          Array.from(new Set([].concat.apply([], d.items.map((i) => i.tags || []))))
+            .map((t) => '<option>' + t + '</option>').join('');
+      }
+
+      el('c-project').addEventListener('change', async () => {
+        const d = await EP.store.get();
+        fill(el('c-theme'), d.themes.filter((t) => t.projectId === el('c-project').value), '未归类');
+        fill(el('c-category'), [], '未归类');
+      });
+
+      el('c-theme').addEventListener('change', async () => {
+        const d = await EP.store.get();
+        fill(el('c-category'), d.categories.filter((c) => c.themeId === el('c-theme').value), '未归类');
+      });
+
+      el('c-save').addEventListener('click', async () => {
+        const excerpt = el('c-excerpt').value.trim();
+        const note = el('c-note').value.trim();
+        if (!excerpt && !note) return toast('请填写原文摘录或批注');
+        await EP.store.update((d) => {
+          d.items.push(EP.model.createItem({
+            projectId: el('c-project').value || null,
+            themeId: el('c-theme').value || null,
+            categoryId: el('c-category').value || null,
+            excerpt, note,
+            pageTitle: el('c-title').value.trim(),
+            url: el('c-url').value.trim(),
+            publisher: el('c-publisher').value.trim(),
+            publishedAt: el('c-published').value.trim(),
+            sourceType: el('c-type').value,
+            tags: el('c-tags').value ? [el('c-tags').value] : []
+          }));
+        });
+        toast('已保存');
+        await EP.app.refresh();
+        await syncSelects();
+      });
+
+      el('c-demo').addEventListener('click', async () => {
+        await seed(true);
+        await EP.app.refresh();
+        await syncSelects();
+        toast('演示数据已重置');
+      });
+
+      (async () => {
+        await seed(false);
+        await EP.app.mount(document.getElementById('root'));
+        await syncSelects();
+      })();
+    })();
+  </script>
+</body>
+</html>

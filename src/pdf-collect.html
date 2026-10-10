@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event Pocket · 收录 PDF</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: var(--ep-bg); }
+    .pdf-collect { min-height: 100vh; background: var(--ep-bg); color: var(--ep-ink); }
+    .pdf-head { display: flex; align-items: center; gap: 11px; padding: 15px 18px; border-bottom: 1px solid var(--ep-line); background: var(--ep-surface); }
+    .pdf-logo { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--ep-accent); color: var(--ep-on-accent); font-size: 11px; font-weight: 600; }
+    .pdf-title { font-size: 15px; font-weight: 600; }
+    .pdf-sub { margin-top: 2px; font-size: 11px; color: var(--ep-sub); }
+    .pdf-main { padding: 16px 18px; display: grid; gap: 13px; }
+    .pdf-source { padding: 10px 11px; background: var(--ep-soft); border-left: 3px solid var(--ep-quote-line); border-radius: 0 7px 7px 0; }
+    .pdf-source-type { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ep-muted); }
+    .pdf-source-name { margin-top: 3px; font-size: 12.5px; color: var(--ep-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pdf-form { display: grid; gap: 12px; }
+    .pdf-form label { display: grid; gap: 5px; font-size: 12px; color: var(--ep-sub); }
+    .pdf-form textarea, .pdf-form input, .pdf-form select { width: 100%; box-sizing: border-box; border: 1px solid var(--ep-line); border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 13px; color: var(--ep-ink); background: var(--ep-surface); outline: none; }
+    .pdf-form textarea:focus, .pdf-form input:focus, .pdf-form select:focus { border-color: var(--ep-sub); }
+    .pdf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pdf-add { margin-left: auto; border: none; padding: 0; background: transparent; color: var(--ep-link); font: inherit; font-size: 11px; cursor: pointer; }
+    .pdf-add:hover { text-decoration: underline; }
+    .pdf-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 13px 18px; border-top: 1px solid var(--ep-line); background: var(--ep-surface); }
+    .pdf-foot .ep-btn { min-width: 74px; }
+    .pdf-empty { padding: 48px 20px; text-align: center; color: var(--ep-sub); font-size: 13px; line-height: 1.6; }
+    .pdf-toast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); padding: 8px 13px; border-radius: 8px; color: var(--ep-toast-fg); background: var(--ep-toast-bg); font-size: 12px; box-shadow: 0 8px 20px rgba(0,0,0,.16); }
+    .pdf-toast[hidden] { display: none; }
+    .pdf-dialog { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; }
+    .pdf-dialog[hidden] { display: none; }
+    .pdf-dialog-mask { position: absolute; inset: 0; background: rgba(20,22,28,.24); }
+    .pdf-dialog-box { position: relative; width: min(300px, calc(100vw - 40px)); padding: 14px; border: 1px solid var(--ep-line); border-radius: 10px; background: var(--ep-surface); box-shadow: 0 16px 40px rgba(20,22,28,.22); }
+    .pdf-dialog-title { margin-bottom: 10px; font-size: 13px; font-weight: 600; }
+    .pdf-dialog-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="store.js"></script>
+  <script src="themes.js"></script>
+  <script src="pdf-collect.js"></script>
+</body>
+</html>

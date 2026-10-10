@@ -1,0 +1,353 @@
+/* Event Pocket · 划词浮窗
+   使用独立命名空间 + 高 z-index，避免被宿主页面样式污染
+   色值走 --ep-* 变量，默认「深红」；data-theme 由 content.js 按管理页设置写入
+   注意：与 src/themes.js 中的色值保持一致 */
+.ep-root {
+  --ep-line: #E1E1E4;
+  --ep-ink: #1A1A1C;
+  --ep-sub: #6E6C73;
+  --ep-muted: #9B989E;
+  --ep-bg: #FFFFFF;
+  --ep-soft: #F2F2F3;
+  --ep-hover: #F2F2F3;
+  --ep-surface: #FFFFFF;
+  --ep-surface-2: #FAFAFB;
+  --ep-accent: #B9182A;
+  --ep-on-accent: #FFFFFF;
+  --ep-hot: #B9182A;
+  --ep-danger: #B9182A;
+  --ep-select-bg: #FBEDEF;
+  --ep-select-fg: #B9182A;
+  --ep-quote-line: #B9182A;
+  --ep-link: #B9182A;
+  --ep-badge-bg: #F2F2F3;
+  --ep-badge-fg: #4A4A50;
+  --ep-toast-bg: #1A1A1C;
+  --ep-toast-fg: #FFFFFF;
+  --ep-toast-sub: #C9C8CC;
+
+  position: absolute;
+  z-index: 2147483000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ep-ink);
+  box-sizing: border-box;
+  /* 强制浅色渲染：即使被注入到深色模式页面也保持可读 */
+  color-scheme: light;
+  forced-color-adjust: none;
+}
+
+.ep-root[data-theme="rei"] {
+  --ep-line: #DCE3EC; --ep-ink: #243447; --ep-sub: #5E7186; --ep-muted: #94A3B2;
+  --ep-bg: #F7F9FC;
+  --ep-soft: #EDF2F7; --ep-hover: #EDF2F7; --ep-surface: #FFFFFF; --ep-surface-2: #F7F9FC;
+  --ep-accent: #35618F; --ep-on-accent: #FFFFFF; --ep-hot: #BE3A32; --ep-danger: #B8324A;
+  --ep-select-bg: #E4EDF6; --ep-select-fg: #2F5B8A;
+  --ep-quote-line: #BE3A32; --ep-link: #35618F;
+  --ep-badge-bg: #E4EDF6; --ep-badge-fg: #3A5670;
+  --ep-toast-bg: #243447; --ep-toast-fg: #F7F9FC; --ep-toast-sub: #A8B8C8;
+}
+
+.ep-root[data-theme="asuka"] {
+  --ep-line: #F0DCD3; --ep-ink: #2E262B; --ep-sub: #6F5F63; --ep-muted: #A3908F;
+  --ep-bg: #FDF7F4;
+  --ep-soft: #FAEDE8; --ep-hover: #FAEDE8; --ep-surface: #FFFFFF; --ep-surface-2: #FDF7F4;
+  --ep-accent: #CE2C26; --ep-on-accent: #FFFFFF; --ep-hot: #CE2C26; --ep-danger: #B8324A;
+  --ep-select-bg: #FBEAE5; --ep-select-fg: #AE2A20;
+  --ep-quote-line: #CE2C26; --ep-link: #AE2A20;
+  --ep-badge-bg: #FBEAE5; --ep-badge-fg: #7A4038;
+  --ep-toast-bg: #2E262B; --ep-toast-fg: #FDF7F4; --ep-toast-sub: #C3A79E;
+}
+
+.ep-root[data-theme="mari"] {
+  --ep-line: #EFDDE9; --ep-ink: #33243A; --ep-sub: #6B5874; --ep-muted: #A08FA8;
+  --ep-bg: #FDFAFC;
+  --ep-soft: #F7EAF2; --ep-hover: #F7EAF2; --ep-surface: #FFFFFF; --ep-surface-2: #FDFAFC;
+  --ep-accent: #B93B78; --ep-on-accent: #FFFFFF; --ep-hot: #B93B78; --ep-danger: #B8324A;
+  --ep-select-bg: #F7E6F0; --ep-select-fg: #963165;
+  --ep-quote-line: #1F9E86; --ep-link: #963165;
+  --ep-badge-bg: #E4F5F0; --ep-badge-fg: #2B6B5E;
+  --ep-toast-bg: #33243A; --ep-toast-fg: #FDFAFC; --ep-toast-sub: #BFA8C6;
+}
+
+.ep-root[data-theme="shinji"] {
+  --ep-line: #E2DEEA; --ep-ink: #2A2440; --ep-sub: #5F5878; --ep-muted: #948DA8;
+  --ep-bg: #F7F5FA;
+  --ep-soft: #EFEBF6; --ep-hover: #EFEBF6; --ep-surface: #FFFFFF; --ep-surface-2: #F7F5FA;
+  --ep-accent: #5B45A8; --ep-on-accent: #FFFFFF; --ep-hot: #5B45A8; --ep-danger: #B8324A;
+  --ep-select-bg: #EAE4F5; --ep-select-fg: #4A3788;
+  --ep-quote-line: #D98324; --ep-link: #4A3788;
+  --ep-badge-bg: #E7F2E6; --ep-badge-fg: #38653C;
+  --ep-toast-bg: #2A2440; --ep-toast-fg: #F7F5FA; --ep-toast-sub: #ADA5C2;
+}
+
+.ep-root ::placeholder {
+  color: var(--ep-muted) !important;
+  opacity: 1 !important;
+}
+
+.ep-root textarea,
+.ep-root input,
+.ep-root select {
+  caret-color: var(--ep-ink) !important;
+}
+
+.ep-root *,
+.ep-root *::before,
+.ep-root *::after {
+  box-sizing: border-box;
+}
+
+/* 气泡 */
+.ep-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--ep-hot);
+  color: var(--ep-on-accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  user-select: none;
+  white-space: nowrap;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.ep-bubble:hover {
+  transform: translateY(-1px);
+}
+
+.ep-bubble .ep-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.85;
+}
+
+/* 采集卡片：右下角可拖拽拉伸 */
+.ep-card {
+  width: 420px;
+  min-width: 360px;
+  min-height: 200px;
+  max-width: min(760px, 92vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ep-surface);
+  border: 1px solid var(--ep-line);
+  border-radius: 12px;
+  box-shadow: 0 18px 44px rgba(20, 22, 28, 0.18);
+  overflow: hidden;
+  resize: both;
+  animation: ep-in 0.14s ease;
+}
+
+@keyframes ep-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.ep-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--ep-ink);
+  color: var(--ep-on-accent);
+}
+
+.ep-card-head .ep-logo {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.ep-card-head .ep-slogan {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.ep-card-head .ep-close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--ep-on-accent);
+  opacity: 0.65;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.ep-card-head .ep-close:hover { opacity: 1; }
+
+.ep-card-head.ep-draggable { cursor: move; user-select: none; }
+.ep-card-head.ep-dragging { cursor: grabbing; }
+.ep-optional { color: var(--ep-muted); font-size: 10px; font-weight: 400; }
+.ep-add {
+  margin-left: auto;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  color: var(--ep-link);
+  font: inherit;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+.ep-add:hover { color: var(--ep-accent); text-decoration: underline; }
+
+/* 浮窗内部的新建 / 提示对话框 */
+.ep-inline-dialog { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; }
+.ep-inline-mask { position: absolute; inset: 0; background: rgba(20, 22, 28, .24); }
+.ep-inline-box {
+  position: relative; z-index: 1; width: min(300px, calc(100vw - 40px));
+  padding: 14px; border-radius: 10px; border: 1px solid var(--ep-line);
+  background: var(--ep-surface); box-shadow: 0 16px 40px rgba(20, 22, 28, .22);
+}
+.ep-inline-title { font-size: 13px; font-weight: 600; color: var(--ep-ink); margin-bottom: 10px; }
+.ep-inline-message { font-size: 12px; color: var(--ep-sub); line-height: 1.6; }
+.ep-inline-input {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--ep-line); border-radius: 7px;
+  padding: 7px 9px; background: var(--ep-surface); color: var(--ep-ink); font: inherit; outline: none;
+}
+.ep-inline-input:focus { border-color: var(--ep-sub); }
+.ep-inline-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 12px; }
+
+.ep-card-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  display: grid;
+  gap: 9px;
+  align-content: start;
+  overflow: auto;
+}
+
+.ep-card-body textarea { min-height: 76px; }
+
+.ep-field { display: grid; gap: 4px; }
+
+.ep-field label {
+  font-size: 11px;
+  color: var(--ep-sub);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ep-field label .ep-req { color: var(--ep-danger); }
+
+.ep-field textarea,
+.ep-field input,
+.ep-field select {
+  width: 100%;
+  border: 1px solid var(--ep-line);
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: var(--ep-ink);
+  background: var(--ep-surface);
+  outline: none;
+  resize: vertical;
+}
+
+.ep-field textarea:focus,
+.ep-field input:focus,
+.ep-field select:focus { border-color: var(--ep-sub); }
+
+.ep-field textarea { min-height: 62px; }
+
+.ep-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.ep-card-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ep-line);
+  background: var(--ep-surface-2);
+}
+
+.ep-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ep-btn-primary {
+  background: var(--ep-accent);
+  color: var(--ep-on-accent);
+  font-weight: 600;
+}
+
+.ep-btn-primary:hover { filter: brightness(1.08); }
+
+.ep-btn-ghost {
+  background: transparent;
+  color: var(--ep-sub);
+  border: 1px solid var(--ep-line);
+}
+
+.ep-btn-ghost:hover { color: var(--ep-ink); }
+
+.ep-foot-note {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--ep-muted);
+}
+
+/* 保存提示：贴边一行小条，不再是整块卡片 */
+.ep-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* 宽度取内容本身：浮窗宿主容器宽高为 0，若用收缩包裹会被压到最小宽度而换行 */
+  width: max-content;
+  max-width: min(560px, 92vw);
+  white-space: nowrap;
+  padding: 7px 13px;
+  border-radius: 8px;
+  background: var(--ep-toast-bg);
+  color: var(--ep-toast-fg);
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 8px 22px rgba(20, 22, 28, 0.2);
+  animation: ep-in 0.14s ease;
+}
+
+.ep-toast .ep-toast-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ep-hot); flex: none;
+}
+
+.ep-toast { overflow: hidden; }
+.ep-toast .ep-toast-path {
+  color: var(--ep-toast-sub);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ep-toast.err { background: var(--ep-danger); color: var(--ep-on-accent); }
+.ep-toast.err .ep-toast-dot { background: var(--ep-on-accent); }
+.ep-toast-link {
+  margin-left: 2px; padding: 0; border: none; background: transparent;
+  color: var(--ep-toast-fg); font: inherit; font-size: 12px; font-weight: 600;
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+
+/* 采集卡片：项目 / 主题 / 类目 三级联动的层级提示 */
+.ep-card select[data-level="2"],
+.ep-card select[data-level="3"] { background-size: 14px; }
+.ep-field.indent { padding-left: 10px; border-left: 1px solid var(--ep-line); }
+.ep-indent { padding-left: 10px; border-left: 2px solid var(--ep-line); }
