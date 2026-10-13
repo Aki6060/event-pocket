@@ -115,13 +115,46 @@
     return lines.join('\n');
   }
 
+  // 收集导出素材实际引用到的层级定义（最小集合），
+  // 保证「导出 JSON」自包含：换版本导入时项目/主题/类目可完整还原，不再出现只有素材、树为空的问题。
+  function referencedStructure(items, data) {
+    const pIds = new Set();
+    const tIds = new Set();
+    const cIds = new Set();
+    (items || []).forEach((it) => {
+      if (it.projectId) pIds.add(it.projectId);
+      if (it.themeId) tIds.add(it.themeId);
+      if (it.categoryId) cIds.add(it.categoryId);
+    });
+    // 沿层级向上补齐父节点（类目→主题→项目），保证引用链完整不断裂
+    (data.categories || []).forEach((c) => {
+      if (cIds.has(c.id)) {
+        if (c.themeId) tIds.add(c.themeId);
+        if (c.projectId) pIds.add(c.projectId);
+      }
+    });
+    (data.themes || []).forEach((t) => {
+      if (tIds.has(t.id) && t.projectId) pIds.add(t.projectId);
+    });
+    return {
+      projects: (data.projects || []).filter((p) => pIds.has(p.id)),
+      themes: (data.themes || []).filter((t) => tIds.has(t.id)),
+      categories: (data.categories || []).filter((c) => cIds.has(c.id))
+    };
+  }
+
   function json(data, f) {
+    const items = filterItems(data, f || {});
+    const structure = referencedStructure(items, data);
     return JSON.stringify(
       {
         generator: 'Event Pocket',
         exportedAt: new Date().toISOString(),
         scope: f || {},
-        items: filterItems(data, f || {})
+        projects: structure.projects,
+        themes: structure.themes,
+        categories: structure.categories,
+        items: items
       },
       null,
       2

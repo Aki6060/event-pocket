@@ -165,6 +165,52 @@
       };
     },
 
+    // 旧版（0.5.2 之前的「导出 JSON」）只含 items，层级仅存 id、无定义与名称。
+    // 导入时按素材里的引用重建 项目→主题→类目 结构，保证内容与层级同步恢复。
+    // 层级名称无法从旧文件恢复（旧格式未导出），用「项目 N / 主题 N / 类目 N」占位，可在管理页重命名。
+    rebuildStructure(items) {
+      const projects = [];
+      const themes = [];
+      const categories = [];
+      const seenP = new Set();
+      const seenT = new Set();
+      const seenC = new Set();
+      let pSeq = 0;
+      let tSeq = 0;
+      let cSeq = 0;
+      const ts = (it) => it.capturedAt || new Date().toISOString();
+      (items || []).forEach((it) => {
+        if (!it) return;
+        let projectId = it.projectId || null;
+        if (projectId && !seenP.has(projectId)) {
+          seenP.add(projectId);
+          projects.push({ id: projectId, name: '项目 ' + ++pSeq, note: '', createdAt: ts(it) });
+        }
+        if (it.themeId && !seenT.has(it.themeId)) {
+          seenT.add(it.themeId);
+          if (!projectId) {
+            // 素材只带 themeId 未带 projectId：兜底挂到占位项目，保证树完整
+            projectId = EP.uid() + '-imp';
+            seenP.add(projectId);
+            projects.push({ id: projectId, name: '项目 ' + ++pSeq, note: '', createdAt: ts(it) });
+          }
+          themes.push({ id: it.themeId, projectId, name: '主题 ' + ++tSeq, createdAt: ts(it) });
+        }
+        if (it.categoryId && !seenC.has(it.categoryId)) {
+          seenC.add(it.categoryId);
+          const parentTheme = it.themeId ? themes.find((t) => t.id === it.themeId) : null;
+          categories.push({
+            id: it.categoryId,
+            projectId: projectId || (parentTheme && parentTheme.projectId) || null,
+            themeId: it.themeId || null,
+            name: '类目 ' + ++cSeq,
+            createdAt: ts(it)
+          });
+        }
+      });
+      return { projects, themes, categories };
+    },
+
     // 级联删除：删除某一层级时，一并删除其下所有子层级与素材
     // type: 'project' | 'theme' | 'category'
     cascadeDelete(data, type, id) {

@@ -727,16 +727,21 @@
             );
             return;
           }
-          // 旧版 / 局部导出：仅导入 items（向后兼容）
+          // 旧版 / 局部导出：仅含 items（层级只存 id）。按素材引用重建 项目→主题→类目，
+          // 让旧版导出文件在 0.5.2 上内容与项目结构同步导入。
           const incoming = Array.isArray(parsed) ? parsed : parsed.items || [];
-          await EP.store.update((d) => {
-            incoming.forEach((it) => {
-              if (!it || !it.id) return;
-              if (!d.items.some((x) => x.id === it.id)) d.items.push(EP.model.createItem(it));
-            });
+          const rebuilt = EP.store.rebuildStructure(incoming);
+          const counts = await EP.store.importAll({
+            projects: rebuilt.projects,
+            themes: rebuilt.themes,
+            categories: rebuilt.categories,
+            items: incoming
           });
           await refresh();
-          await epAlert('导入完成，新增 ' + incoming.length + ' 条素材。', '导入成功');
+          const structNote = (counts.projects + counts.themes + counts.categories) > 0
+            ? '，并按旧版格式重建项目结构（项目 ' + counts.projects + ' · 主题 ' + counts.themes + ' · 类目 ' + counts.categories + '）。旧版导出未包含层级名称，已用「项目 1 / 主题 1…」占位，可在树中直接重命名'
+            : '';
+          await epAlert('导入完成，新增 ' + counts.items + ' 条素材' + structNote + '。', '导入成功');
         } catch (e) {
           await epAlert('导入失败：文件不是有效的 JSON。', '导入失败');
         }
