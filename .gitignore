@@ -3,6 +3,7 @@
 # 解包后的发布目录（由 zip 解压，属于分发产物）
 event-pocket-0.4.1/
 event-pocket-0.5.1/
+event-pocket-0.5.2/
 
 # ===== 日志 / 临时 =====
 *.log

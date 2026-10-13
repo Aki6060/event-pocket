@@ -505,14 +505,8 @@
   }
 
   async function delProject(id) {
-    if (!(await epConfirm('删除该项目会同时删除其主题、类目和素材，确认删除？', '删除项目'))) return;
-    await EP.store.update((d) => {
-      d.projects = d.projects.filter((p) => p.id !== id);
-      d.themes = d.themes.filter((t) => t.projectId !== id);
-      d.categories = d.categories.filter((c) => c.projectId !== id);
-      d.items = d.items.filter((i) => i.projectId !== id);
-      if (d.settings.lastProjectId === id) d.settings.lastProjectId = null;
-    });
+    if (!(await epConfirm('删除该项目会同时删除其下所有主题、类目和素材，且不可恢复。确认删除？', '删除项目'))) return;
+    await EP.store.update((d) => EP.store.cascadeDelete(d, 'project', id));
     if (state.projectId === id) {
       state.projectId = null;
       state.themeId = null;
@@ -532,18 +526,12 @@
   }
 
   async function delTheme(id) {
-    if (!(await epConfirm('删除主题会同时删除其类目，素材将变为未归类。确认删除？', '删除主题'))) return;
-    await EP.store.update((d) => {
-      d.themes = d.themes.filter((t) => t.id !== id);
-      d.categories = d.categories.filter((c) => c.themeId !== id);
-      d.items.forEach((i) => {
-        if (i.themeId === id) {
-          i.themeId = null;
-          i.categoryId = null;
-        }
-      });
-    });
-    if (state.themeId === id) state.themeId = null;
+    if (!(await epConfirm('删除主题会同时删除其下所有类目和素材，且不可恢复。确认删除？', '删除主题'))) return;
+    await EP.store.update((d) => EP.store.cascadeDelete(d, 'theme', id));
+    if (state.themeId === id) {
+      state.themeId = null;
+      state.categoryId = null;
+    }
     await refresh();
   }
 
@@ -558,13 +546,8 @@
   }
 
   async function delCategory(id) {
-    if (!(await epConfirm('删除类目后，该类目下的素材将变为未归类。确认删除？', '删除类目'))) return;
-    await EP.store.update((d) => {
-      d.categories = d.categories.filter((c) => c.id !== id);
-      d.items.forEach((i) => {
-        if (i.categoryId === id) i.categoryId = null;
-      });
-    });
+    if (!(await epConfirm('删除类目会同时删除其下所有素材，且不可恢复。确认删除？', '删除类目'))) return;
+    await EP.store.update((d) => EP.store.cascadeDelete(d, 'category', id));
     if (state.categoryId === id) state.categoryId = null;
     await refresh();
   }

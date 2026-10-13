@@ -163,6 +163,35 @@
         categories: incoming.categories ? incoming.categories.length : 0,
         items: incoming.items ? incoming.items.length : 0
       };
+    },
+
+    // 级联删除：删除某一层级时，一并删除其下所有子层级与素材
+    // type: 'project' | 'theme' | 'category'
+    cascadeDelete(data, type, id) {
+      const d = data;
+      if (type === 'project') {
+        const themeIds = new Set(d.themes.filter((t) => t.projectId === id).map((t) => t.id));
+        const catIds = new Set(
+          d.categories.filter((c) => c.projectId === id || themeIds.has(c.themeId)).map((c) => c.id)
+        );
+        d.projects = d.projects.filter((p) => p.id !== id);
+        d.themes = d.themes.filter((t) => t.projectId !== id);
+        d.categories = d.categories.filter((c) => c.projectId !== id && !themeIds.has(c.themeId));
+        // 覆盖素材只带 themeId / categoryId（未带 projectId）的情况
+        d.items = d.items.filter(
+          (i) => i.projectId !== id && !themeIds.has(i.themeId) && !catIds.has(i.categoryId)
+        );
+        if (d.settings.lastProjectId === id) d.settings.lastProjectId = null;
+      } else if (type === 'theme') {
+        const catIds = new Set(d.categories.filter((c) => c.themeId === id).map((c) => c.id));
+        d.themes = d.themes.filter((t) => t.id !== id);
+        d.categories = d.categories.filter((c) => c.themeId !== id);
+        d.items = d.items.filter((i) => i.themeId !== id && !catIds.has(i.categoryId));
+      } else if (type === 'category') {
+        d.categories = d.categories.filter((c) => c.id !== id);
+        d.items = d.items.filter((i) => i.categoryId !== id);
+      }
+      return d;
     }
   };
 
