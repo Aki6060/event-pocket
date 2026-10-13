@@ -108,6 +108,7 @@
       '<button class="ep-btn" data-action="export-md">导出 Markdown</button>' +
       '<button class="ep-btn" data-action="export-json">导出 JSON</button>' +
       '<button class="ep-btn ghost" data-action="import-json">导入</button>' +
+      '<button class="ep-btn ghost" data-action="export-backup">备份</button>' +
       '<button class="ep-btn ghost" data-action="theme">换肤</button>' +
       '</div></header>' +
       '<div class="ep-body">' +
@@ -340,6 +341,7 @@
     }
     if (action === 'export-md') return doExport('md');
     if (action === 'export-json') return doExport('json');
+    if (action === 'export-backup') return doBackup();
     if (action === 'import-json') return doImport();
     if (action === 'theme') return openThemePicker();
   }
@@ -727,6 +729,22 @@
       reader.onload = async () => {
         try {
           const parsed = JSON.parse(String(reader.result));
+          // 完整备份：含 projects/themes/categories/items/settings，按 id 合并继承全部内容
+          const hasStructure =
+            Array.isArray(parsed.projects) ||
+            Array.isArray(parsed.themes) ||
+            Array.isArray(parsed.categories);
+          if (hasStructure) {
+            const counts = await EP.store.importAll(parsed);
+            await refresh();
+            await epAlert(
+              '已从备份继承全部内容（项目 ' + counts.projects + ' · 主题 ' + counts.themes +
+              ' · 类目 ' + counts.categories + ' · 素材 ' + counts.items + '）。',
+              '继承成功'
+            );
+            return;
+          }
+          // 旧版 / 局部导出：仅导入 items（向后兼容）
           const incoming = Array.isArray(parsed) ? parsed : parsed.items || [];
           await EP.store.update((d) => {
             incoming.forEach((it) => {
@@ -743,6 +761,16 @@
       reader.readAsText(file);
     });
     input.click();
+  }
+
+  async function doBackup() {
+    const data = await EP.store.exportAll();
+    const stamp = new Date().toISOString().slice(0, 10);
+    download('EventPocket 备份 ' + stamp + '.json', JSON.stringify(data, null, 2), 'application/json;charset=utf-8');
+    await epAlert(
+      '已导出完整备份（含项目 / 主题 / 类目 / 素材 / 设置）。换版本或换扩展后，用「导入」即可全量继承。',
+      '备份完成'
+    );
   }
 
   async function refresh() {

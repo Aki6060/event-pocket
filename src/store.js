@@ -1,7 +1,12 @@
 (function () {
   const EP = (window.EP = window.EP || {});
 
-  const KEY = 'event-pocket:v1';
+  // 数据 schema 版本：升级后旧版本键的内容会被自动继承到新键
+  const SCHEMA_VERSION = 2;
+  const KEY = 'event-pocket:v' + SCHEMA_VERSION;
+  // 历史版本存储键，按数组顺序尝试继承（当前键为空时）
+  const LEGACY_KEYS = ['event-pocket:v1'];
+
   const memory = { data: null };
 
   function hasChromeStorage() {
@@ -14,7 +19,7 @@
 
   function defaultData() {
     return {
-      version: 1,
+      version: SCHEMA_VERSION,
       projects: [],
       themes: [],
       categories: [],
@@ -26,37 +31,64 @@
   function normalize(data) {
     const base = defaultData();
     if (!data || typeof data !== 'object') return base;
-    return Object.assign(base, data, {
+    const merged = Object.assign(base, data, {
       settings: Object.assign(base.settings, data.settings || {})
     });
+    // 始终以当前 schema 版本为准，避免旧版本号遗留
+    merged.version = SCHEMA_VERSION;
+    return merged;
   }
 
-  function read() {
+  function readRaw(key) {
     if (hasChromeStorage()) {
       return new Promise((resolve) => {
-        chrome.storage.local.get(KEY, (obj) => resolve(obj ? obj[KEY] : null));
+        chrome.storage.local.get(key, (obj) => resolve(obj ? obj[key] : null));
       });
     }
     try {
-      const raw = window.localStorage.getItem(KEY);
+      const raw = window.localStorage.getItem(key);
       return Promise.resolve(raw ? JSON.parse(raw) : null);
     } catch (e) {
-      return Promise.resolve(memory.data);
+      return Promise.resolve(null);
     }
   }
 
-  function write(data) {
+  function writeRaw(key, data) {
     if (hasChromeStorage()) {
       return new Promise((resolve) => {
-        chrome.storage.local.set({ [KEY]: data }, () => resolve(true));
+        chrome.storage.local.set({ [key]: data }, () => resolve(true));
       });
     }
     try {
-      window.localStorage.setItem(KEY, JSON.stringify(data));
+      window.localStorage.setItem(key, JSON.stringify(data));
     } catch (e) {
       memory.data = data;
     }
     return Promise.resolve(true);
+  }
+
+  // 自动继承：当前版本键为空、但历史键有内容时，整体拷贝过来。
+  // 解决「新版本替换旧版本时」内容丢失、需要手动导入的问题（同扩展 ID 场景）。
+  async function migrate() {
+    const cur = await readRaw(KEY);
+    if (cur && (cur.projects?.length || cur.themes?.length || cur.categories?.length || cur.items?.length)) {
+      return;
+    }
+    for (const lk of LEGACY_KEYS) {
+      const legacy = await readRaw(lk);
+      if (legacy && (legacy.projects?.length || legacy.themes?.length || legacy.categories?.length || legacy.items?.length)) {
+        await writeRaw(KEY, normalize(legacy));
+        return;
+      }
+    }
+  }
+
+  function read() {
+    return readRaw(KEY);
+  }
+
+  function write(data) {
+    return writeRaw(KEY, data);
   }
 
   EP.uid = function () {
@@ -66,11 +98,25 @@
     );
   };
 
+  function mergeList(dst, src) {
+    const ids = new Set(dst.map((x) => x.id));
+    (src || []).forEach((x) => {
+      if (x && x.id && !ids.has(x.id)) dst.push(x);
+    });
+  }
+
   EP.store = {
     KEY,
+    SCHEMA_VERSION,
     defaultData,
 
+    // 启动时调用：把历史版本的内容自动继承到当前版本键
+    async migrate() {
+      await migrate();
+    },
+
     async get() {
+      await migrate();
       return normalize(await read());
     },
 
@@ -80,6 +126,7 @@
     },
 
     async update(mutator) {
+      await migrate();
       const data = await this.get();
       const result = mutator(data);
       await write(normalize(data));
@@ -89,6 +136,33 @@
     async reset() {
       await write(defaultData());
       return defaultData();
+    },
+
+    // 完整备份：导出全量数据（含项目/主题/类目/素材/设置），用于跨版本 / 跨扩展迁移
+    async exportAll() {
+      return normalize(await read());
+    },
+
+    // 完整恢复：按 id 合并全量结构，已存在的条目不覆盖，仅补齐缺失内容。
+    // 与旧版「只导 items」的导入不同，这里会一并继承目录树与设置。
+    async importAll(incoming) {
+      if (!incoming || typeof incoming !== 'object') return false;
+      await migrate();
+      const data = normalize(await read());
+      mergeList(data.projects, incoming.projects);
+      mergeList(data.themes, incoming.themes);
+      mergeList(data.categories, incoming.categories);
+      mergeList(data.items, incoming.items);
+      if (incoming.settings && typeof incoming.settings === 'object') {
+        data.settings = Object.assign(data.settings, incoming.settings);
+      }
+      await write(normalize(data));
+      return {
+        projects: incoming.projects ? incoming.projects.length : 0,
+        themes: incoming.themes ? incoming.themes.length : 0,
+        categories: incoming.categories ? incoming.categories.length : 0,
+        items: incoming.items ? incoming.items.length : 0
+      };
     }
   };
 

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Event Pocket",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Collect signals. Build insights. 划词即采集活动网页原文与批注，按项目分级管理，统一导出研究素材包。",
   "action": {
     "default_title": "Event Pocket",
