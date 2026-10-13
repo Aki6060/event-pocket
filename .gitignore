@@ -11,6 +11,9 @@ server.log
 # ===== 游离预览文件（非插件本体） =====
 eva-skins.preview.html
 
+# ===== 私钥（仅用于以相同 ID 打包 .crx，切勿提交到仓库） =====
+event-pocket.pem
+
 # ===== 操作系统 / 编辑器 =====
 .DS_Store
 Thumbs.db

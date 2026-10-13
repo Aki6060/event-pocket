@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Event Pocket",
   "version": "0.5.2",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2JpSyd9Mklh70XTw9JIPIN1EFZVL6yc66a1n6EIRXvcD09Vx9EmAUwocliWK9uMDzRzDezJfE8bfSTsaszk2Pr/F8cSF9akpv+UhmD4DUYzRxiStXuN/lABVkbwo+eVHq0jhgxuBn48ltB9Goreuf0CrqDz33kOZDKl1/XOPEwjrhuQMJCdHJUiOPl/QJEN/5/MGEp3s+6zeurC6lSj6g8XJSbCdBKBJ+H8xzE5Ckj/8MSs+qTrKkZs3clMcSaUEEr+dkHz8szgMIaXerHKwmc0XgPJfeH8x1ZiF2rL2UTqk98RFMeaj2TOFP1VIjB3O67CRJiBgdyrchxwtsnYoNQIDAQAB",
   "description": "Collect signals. Build insights. 划词即采集活动网页原文与批注，按项目分级管理，统一导出研究素材包。",
   "action": {
     "default_title": "Event Pocket",
