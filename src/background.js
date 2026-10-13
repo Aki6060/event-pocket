@@ -1,4 +1,5 @@
-const KEY = 'event-pocket:v1';
+const KEY = 'event-pocket:v2';
+const LEGACY_KEYS = ['event-pocket:v1'];
 const PDF_DRAFT_KEY = 'event-pocket:pdf-draft';
 
 function uid() {
@@ -6,19 +7,56 @@ function uid() {
 }
 
 function emptyData() {
-  return { version: 1, projects: [], themes: [], categories: [], items: [], settings: { lastProjectId: null } };
+  return { version: 2, projects: [], themes: [], categories: [], items: [], settings: { lastProjectId: null } };
+}
+
+// 与管理页 EP.store 保持同一份 schema 与归一逻辑，杜绝两套存储键分裂
+function normalize(data) {
+  const base = emptyData();
+  if (!data || typeof data !== 'object') return base;
+  const merged = Object.assign(base, data, {
+    settings: Object.assign(base.settings, data.settings || {})
+  });
+  merged.version = 2;
+  return merged;
+}
+
+function readRaw() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(KEY, (obj) => resolve(obj && obj[KEY] ? obj[KEY] : null));
+  });
 }
 
 function read() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(KEY, (obj) => resolve(obj && obj[KEY] ? obj[KEY] : emptyData()));
-  });
+  return readRaw().then((d) => normalize(d || emptyData()));
 }
 
 function write(data) {
   return new Promise((resolve) => {
     chrome.storage.local.set({ [KEY]: data }, () => resolve(true));
   });
+}
+
+// 一次性合并：把历史 v1 键数据按 id 并入当前 v2 键，再删除 v1。
+// 修复 0.5.2 升级时 background 仍读 v1、与素材管理页（v2）分裂，导致浮窗取树/建节点/存素材不同步。
+async function migrate() {
+  for (const lk of LEGACY_KEYS) {
+    const legacy = await new Promise((resolve) => chrome.storage.local.get(lk, (o) => resolve(o && o[lk] ? o[lk] : null)));
+    if (!legacy) continue;
+    const cur = normalize(await readRaw() || {});
+    const merge = (key, seen) => {
+      (legacy[key] || []).forEach((x) => { if (x && x.id && !seen.has(x.id)) cur[key].push(x); });
+    };
+    merge('projects', new Set((cur.projects || []).map((x) => x.id)));
+    merge('themes', new Set((cur.themes || []).map((x) => x.id)));
+    merge('categories', new Set((cur.categories || []).map((x) => x.id)));
+    merge('items', new Set((cur.items || []).map((x) => x.id)));
+    if (legacy.settings && typeof legacy.settings === 'object') {
+      cur.settings = Object.assign(cur.settings, legacy.settings);
+    }
+    await write(cur);
+    await new Promise((resolve) => chrome.storage.local.remove(lk, resolve));
+  }
 }
 
 function writePdfDraft(draft) {
@@ -69,6 +107,7 @@ function openPdfCollectWindow() {
 }
 
 async function createNode(payload) {
+  await migrate();
   const data = await read();
   const p = payload || {};
   const name = String(p.name || '').trim();
@@ -98,6 +137,7 @@ async function createNode(payload) {
 }
 
 async function saveItem(payload) {
+  await migrate();
   const data = await read();
   const page = (payload && payload.page) || {};
   const p = payload || {};
@@ -243,7 +283,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 // 来自划词浮窗的保存请求
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.type === 'EP_GET_TREE') {
-    read().then((d) => {
+    (async () => {
+      await migrate();
+      const d = await read();
       sendResponse({
         projects: d.projects,
         themes: d.themes,
@@ -251,7 +293,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         lastProjectId: d.settings.lastProjectId || (d.projects[0] && d.projects[0].id) || null,
         theme: d.settings.theme || 'night'
       });
-    });
+    })();
     return true;
   }
   if (msg && msg.type === 'EP_GET_PDF_DRAFT') {
